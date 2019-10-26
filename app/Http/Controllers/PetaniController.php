@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Petani;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -14,7 +16,7 @@ class PetaniController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:petanis',
             'username' => 'required|string|max:255|unique:petanis',
             'password' => 'required|string|min:6|confirmed',
             'phone' => 'required',
@@ -38,7 +40,6 @@ class PetaniController extends Controller
                 'phone' => $request->phone,
                 'address' => $request->address,
                 'age' => $request->age,
-                'avatar' => $request->avatar,
                 'ktp_photo' => $request->ktp_photo,
                 'with_ktp_photo' => $request->with_ktp_photo
             ]);
@@ -107,6 +108,23 @@ class PetaniController extends Controller
                 'usia' => $data->age,
                 'foto profile' => $data->avatar
             ],
+        ], 200);
+    }
+
+    public function updateAvatar(Request $request, $id)
+    {
+        $avatar = $request->file($request->avatar);
+        $avatarImage = $avatar->getFilename(). '.' .$avatar->getClientOriginalExtension();
+        Storage::disk('foto_profil')->put($avatarImage, File::get($avatar));
+
+        $data = Petani::where('id', $id)->update([
+            'avatar' => $avatarImage
+        ]);
+
+        return response()->json([
+            'error' => 'false',
+            'message' => 'Berhasil diperbarui',
+            'data' => $data
         ], 200);
     }
 }

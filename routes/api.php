@@ -20,4 +20,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['prefix' => 'petani'], function () {
     Route::post('register', 'PetaniController@register');
     Route::post('login', 'PetaniController@login');
+    Route::patch('profile/{id}', 'PetaniController@updateAvatar');
+    Route::get('iot-ph', 'DevicePhController@getData');
 });
