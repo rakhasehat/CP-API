@@ -13,9 +13,7 @@ class DevicePhController extends Controller
         $json = [
             'error' => 'false',
             'message' => 'Berhasil Ambil Data',
-            'listDeviceIot' => [
-                'id' => $data[0]->id
-            ]
+            'listDeviceIot' => $data
         ];
         return response()->json($json, 200);
     }
